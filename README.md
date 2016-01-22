@@ -1,3 +1,3 @@
 # h2wfsharp
 
-## Health2Wealth console app written in F#
+Health2Wealth console client written in F#
