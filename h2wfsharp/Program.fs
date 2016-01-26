@@ -12,8 +12,10 @@ type RunResponse =
     | Nothing of unit
 
 let basic email password = 
-    let cred = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(sprintf "%s:%s" email password))
-    sprintf "Basic %s" cred
+    sprintf "%s:%s" email password
+    |> System.Text.Encoding.UTF8.GetBytes
+    |> Convert.ToBase64String
+    |> sprintf "Basic %s"
 
 let fetchUrl url email password =  
     Http.Request(sprintf "https://h2w.cc/api/v1/%s" url, 
@@ -21,8 +23,7 @@ let fetchUrl url email password =
         silentHttpErrors = true )
     |> Response
 
-let login email password =
-    fetchUrl "auth/token" email password
+let login email password = fetchUrl "auth/token" email password
 
 let helpText () = printfn "You're gonna need help to do this right."
 
@@ -40,8 +41,7 @@ let call args =
     | "dashboard"::xs -> Nothing()
     | _ -> Nothing()
 
-let start args =
-    call args |> handleResponse
+let start args = call args |> handleResponse
 
 let testCase args =
     printfn "ARGS:   %A" args
