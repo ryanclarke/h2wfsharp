@@ -11,17 +11,26 @@ type RunResponse =
     | Response of FSharp.Data.HttpResponse
     | Nothing of unit
 
-type EmailAndPassword = string * string
+type EmailAndPassword = {
+    email: string
+    password: string
+}
+
 type Token = string
 
 type Credentials = 
-    | EmailAndPassword of string * string
-    | Token of string
+    | UserCred of EmailAndPassword
+    | TokenCred of Token
 
-let credString (cred:Credentials) = 
+type Req = {
+    url: string
+    cred: Credentials
+}
+
+let credString cred = 
     match cred with
-    | Credentials.EmailAndPassword(e, p) -> sprintf "%s:%s" e p
-    | Credentials.Token(t) -> sprintf "%s:" t
+    | UserCred({email=e; password=p}) -> sprintf "%s:%s" e p
+    | TokenCred(t) -> sprintf "%s:" t
 
 let basic cred = 
     cred
@@ -30,13 +39,14 @@ let basic cred =
     |> Convert.ToBase64String
     |> sprintf "Basic %s"
 
-let fetchUrl url cred =  
-    Http.Request(sprintf "https://h2w.cc/api/v1/%s" url, 
-        headers = [ "X-H2W-Client-ID", "0"; "Authorization", basic cred ], 
+let h2wUrl endpoint =
+    sprintf "https://h2w.cc/api/v1/%s" endpoint
+
+let hitEndpoint req =  
+    Http.Request(req.url, 
+        headers = [ "X-H2W-Client-ID", "0"; "Authorization", basic req.cred ], 
         silentHttpErrors = true )
     |> Response
-
-let login cred = fetchUrl "auth/token" cred
 
 let helpText () = printfn "You're gonna need help to do this right."
 
@@ -50,9 +60,9 @@ let handleResponse run =
 
 let call args =
     match args with
-    | "auth"::email::password::xss ->
-        Credentials.EmailAndPassword(email, password)
-        |> login
+    | "auth"::e::p::xss ->
+        { url=h2wUrl "auth/token"; cred=UserCred({ email=e; password=p }) }
+        |> hitEndpoint
     | "dashboard"::xs -> Nothing()
     | _ -> Nothing()
 
@@ -63,7 +73,7 @@ let testCase args =
     start args
     printfn "" 
     
-let testBadCases() =
+let testBadCases () =
     testCase []
     testCase ["garbage"]
     testCase ["garbage"; "auth"]
