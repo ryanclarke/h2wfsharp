@@ -1,13 +1,17 @@
 ﻿// Learn more about F# at http://fsharp.org
 // See the 'F# Tutorial' project for more help.
 
+open FSharp.Core
 open FSharp.Data
+open FSharp.Data.JsonExtensions
 open System
+
+type TokenProvider = JsonProvider<""" {"token":"abc" } """>
 
 let auth = "auth"
 let dashboard = "dashboard"
 
-type RunResponse = 
+type RunResponse =
     | Response of FSharp.Data.HttpResponse
     | Nothing of unit
 
@@ -18,7 +22,7 @@ type EmailAndPassword = {
 
 type Token = string
 
-type Credentials = 
+type Credentials =
     | UserCred of EmailAndPassword
     | TokenCred of Token
 
@@ -27,35 +31,41 @@ type Req = {
     cred: Credentials
 }
 
-let credString cred = 
+let credString cred =
     match cred with
     | UserCred({email=e; password=p}) -> sprintf "%s:%s" e p
     | TokenCred(t) -> sprintf "%s:" t
 
-let basic cred = 
+let basic cred =
     cred
     |> credString
     |> System.Text.Encoding.UTF8.GetBytes
     |> Convert.ToBase64String
     |> sprintf "Basic %s"
 
-let h2wUrl endpoint =
-    sprintf "https://h2w.cc/api/v1/%s" endpoint
+let h2wUrl endpoint = sprintf "https://h2w.cc/api/v1/%s" endpoint
 
-let hitEndpoint req =  
-    Http.Request(req.url, 
-        headers = [ "X-H2W-Client-ID", "0"; "Authorization", basic req.cred ], 
+let hitEndpoint req =
+    Http.Request(req.url,
+        headers = [ "X-H2W-Client-ID", "0"; "Authorization", basic req.cred ],
         silentHttpErrors = true )
     |> Response
 
 let helpText () = printfn "You're gonna need help to do this right."
 
-let handleResponse run = 
+let handleResponse run =
     match run with
     | Response resp -> 
         printfn "URL:    %A" resp.ResponseUrl
         printfn "STATUS: %A" resp.StatusCode
-        printfn "BODY:   %A" resp.Body
+        match resp.Body with
+        | Text(body) -> 
+            printfn "BODY:   %A" body
+            if resp.StatusCode = 200
+            then
+                let jv = TokenProvider.Parse(body)
+                printfn "TOKEN:  %A" jv.Token
+        | Binary(body) -> printfn "BODY:   %A" body
     | _ -> helpText()
 
 let call args =
@@ -88,7 +98,7 @@ let test email password =
     testCase ["dashboard"]
 
 [<EntryPoint>]
-let main argv = 
+let main argv =
     let args = argv |> Array.toList
     match args with
     | "test"::xs ->
