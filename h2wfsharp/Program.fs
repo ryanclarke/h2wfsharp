@@ -67,7 +67,7 @@ let handleResponse run =
         match resp.Body with
         | Text(body) -> 
             printfn "BODY:   %A" body
-            match resp.StatusCode  with
+            match resp.StatusCode with
             | 200 ->
                 TokenProvider.Parse(body).Token
                 |> storeToken
@@ -75,13 +75,21 @@ let handleResponse run =
             | _ ->
                 ErrorProvider.Parse(body).Error
                 |> printfn "ERROR:  %A"
-        | Binary(body) -> printfn "BODY:   %A" body
+        | Binary(body) ->
+            match resp.StatusCode with
+            | 204 -> printfn "BODY:   <NO CONTENT>"
+            | _ -> printfn "BODY:   %A" body
     | _ -> helpText()
+
+let getToken () = File.ReadAllLines(".h2wfsharptoken").[0] |> TokenCred
 
 let call args =
     match args with
     | "auth"::e::p::xss ->
         { url=h2wUrl "auth/token"; cred=UserCred({ email=e; password=p }) }
+        |> hitEndpoint
+    | "auth"::"verify"::xss ->
+        { url=h2wUrl "auth/token/verify"; cred=getToken() }
         |> hitEndpoint
     | "dashboard"::xs -> Nothing()
     | _ -> Nothing()
@@ -105,6 +113,7 @@ let test email password =
     testCase ["auth"; email; "badpass"]
     testCase ["auth"; "bademail"; password]
     testCase ["auth"; email; password]
+    testCase ["auth"; "verify"]
     testCase ["dashboard"]
 
 [<EntryPoint>]
