@@ -5,6 +5,7 @@ open FSharp.Core
 open FSharp.Data
 open FSharp.Data.JsonExtensions
 open System
+open System.IO
 
 type TokenProvider = JsonProvider<""" {"token":"guid string"} """>
 type ErrorProvider = JsonProvider<""" {"error":"http error"} """>
@@ -54,6 +55,10 @@ let hitEndpoint req =
 
 let helpText () = printfn "You're gonna need help to do this right."
 
+let storeToken token =
+    File.WriteAllLines(".h2wfsharptoken", [token])
+    token
+
 let handleResponse run =
     match run with
     | Response resp -> 
@@ -65,6 +70,7 @@ let handleResponse run =
             match resp.StatusCode  with
             | 200 ->
                 TokenProvider.Parse(body).Token
+                |> storeToken
                 |> printfn "TOKEN:  %A"
             | _ ->
                 ErrorProvider.Parse(body).Error
