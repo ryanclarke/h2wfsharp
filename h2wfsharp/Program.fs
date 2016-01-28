@@ -6,7 +6,8 @@ open FSharp.Data
 open FSharp.Data.JsonExtensions
 open System
 
-type TokenProvider = JsonProvider<""" {"token":"abc" } """>
+type TokenProvider = JsonProvider<""" {"token":"guid string"} """>
+type ErrorProvider = JsonProvider<""" {"error":"http error"} """>
 
 let auth = "auth"
 let dashboard = "dashboard"
@@ -61,10 +62,13 @@ let handleResponse run =
         match resp.Body with
         | Text(body) -> 
             printfn "BODY:   %A" body
-            if resp.StatusCode = 200
-            then
-                let jv = TokenProvider.Parse(body)
-                printfn "TOKEN:  %A" jv.Token
+            match resp.StatusCode  with
+            | 200 ->
+                TokenProvider.Parse(body).Token
+                |> printfn "TOKEN:  %A"
+            | _ ->
+                ErrorProvider.Parse(body).Error
+                |> printfn "ERROR:  %A"
         | Binary(body) -> printfn "BODY:   %A" body
     | _ -> helpText()
 
