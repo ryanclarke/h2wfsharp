@@ -10,9 +10,6 @@ open System.IO
 type TokenProvider = JsonProvider<""" {"token":"guid string"} """>
 type ErrorProvider = JsonProvider<""" {"error":"http error"} """>
 
-let auth = "auth"
-let dashboard = "dashboard"
-
 type RunResponse =
     | Response of FSharp.Data.HttpResponse
     | Nothing of unit
@@ -59,6 +56,8 @@ let storeToken token =
     File.WriteAllLines(".h2wfsharptoken", [token])
     token
 
+let getToken () = File.ReadAllLines(".h2wfsharptoken").[0] |> TokenCred
+
 let handleResponse run =
     match run with
     | Response resp -> 
@@ -81,17 +80,20 @@ let handleResponse run =
             | _ -> printfn "BODY:   %A" body
     | _ -> helpText()
 
-let getToken () = File.ReadAllLines(".h2wfsharptoken").[0] |> TokenCred
+let authCall args =
+    match args with
+    | email :: password :: x ->
+        { url=h2wUrl "auth/token"; cred=UserCred({ email=email; password=password }) }
+        |> hitEndpoint
+    | "verify" :: x ->
+        { url=h2wUrl "auth/token/verify"; cred=getToken() }
+        |> hitEndpoint
+    | _ -> Nothing()
 
 let call args =
     match args with
-    | "auth"::e::p::xss ->
-        { url=h2wUrl "auth/token"; cred=UserCred({ email=e; password=p }) }
-        |> hitEndpoint
-    | "auth"::"verify"::xss ->
-        { url=h2wUrl "auth/token/verify"; cred=getToken() }
-        |> hitEndpoint
-    | "dashboard"::xs -> Nothing()
+    | "auth" :: x -> authCall x
+    | "dashboard" :: x -> Nothing()
     | _ -> Nothing()
 
 let start args = args |> call |> handleResponse
@@ -102,18 +104,21 @@ let testCase args =
     printfn "" 
     
 let testBadCases () =
-    testCase []
     testCase ["garbage"]
     testCase ["garbage"; "auth"]
 
-let test email password =
-    testBadCases()
+let testAuthCases email password =
     testCase ["auth"]
     testCase ["auth"; email]
     testCase ["auth"; email; "badpass"]
     testCase ["auth"; "bademail"; password]
     testCase ["auth"; email; password]
     testCase ["auth"; "verify"]
+
+let testAll email password =
+    testCase []
+    testBadCases()
+    testAuthCases email password
     testCase ["dashboard"]
 
 [<EntryPoint>]
@@ -122,7 +127,7 @@ let main argv =
     match args with
     | "test"::xs ->
         match xs with
-        | email::password::xss -> test email password
+        | email::password::xss -> testAll email password
         | _ -> testBadCases()
     | _ -> start args
     0 // return an integer exit code
