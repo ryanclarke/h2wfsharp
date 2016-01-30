@@ -69,9 +69,10 @@ module Client =
                 printfn "BODY:   %A" body
                 match resp.StatusCode with
                 | 200 ->
-                    TokenProvider.Parse(body).Token
-                    |> storeToken
-                    |> printfn "TOKEN:  %A"
+                    match TokenProvider.Parse(body).Token with
+                    | "" -> ()
+                    | t -> storeToken t |> printfn "TOKEN:  %A"
+                    | _ -> ()
                 | _ ->
                     ErrorProvider.Parse(body).Error
                     |> printfn "ERROR:  %A"
@@ -94,7 +95,9 @@ module Client =
     let call args =
         match args with
         | "auth" :: x -> authCall x
-        | "dashboard" :: x -> Nothing()
+        | "dashboard" :: x ->
+            Req(h2wUrl "dashboard", getToken())
+            |> hitEndpoint
         | _ -> Nothing()
 
     let Start args = args |> call |> handleResponse
