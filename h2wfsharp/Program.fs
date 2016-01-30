@@ -72,7 +72,6 @@ module Client =
                     match TokenProvider.Parse(body).Token with
                     | "" -> ()
                     | t -> storeToken t |> printfn "TOKEN:  %A"
-                    | _ -> ()
                 | _ ->
                     ErrorProvider.Parse(body).Error
                     |> printfn "ERROR:  %A"
