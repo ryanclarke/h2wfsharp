@@ -81,15 +81,22 @@ module Client =
                 | _ -> printfn "BODY:   %A" body
         | _ -> helpText()
 
+    let flagParser flags =
+        match flags with
+        | "-e" :: email :: x ->
+            match x with
+            | "-p" :: password :: x -> UserCred({email=email; password=password})
+            | _ -> UserCred({email=email; password=""})
+        | _ -> getToken()
+
     let authCall args =
         match args with
-        | email :: password :: x ->
-            Req(h2wUrl "auth/token", UserCred({ email=email; password=password }))
-            |> hitEndpoint
         | "verify" :: x ->
             Req(h2wUrl "auth/token/verify", getToken())
             |> hitEndpoint
-        | _ -> Nothing()
+        | x ->
+            Req(h2wUrl "auth/token", flagParser x)
+            |> hitEndpoint
 
     let call args =
         match args with
@@ -117,6 +124,7 @@ module Test =
         RunCase ["auth"; email; "badpass"]
         RunCase ["auth"; "bademail"; password]
         RunCase ["auth"; email; password]
+        RunCase ["auth"; "-e"; email; "-p"; password]
         RunCase ["auth"; "verify"]
 
     let RunAll email password =
