@@ -81,13 +81,15 @@ module Client =
                 | _ -> printfn "BODY:   %A" body
         | _ -> helpText()
 
-    let flagParser flags =
+    let rec flagParser userCred flags =
         match flags with
         | "-e" :: email :: x ->
-            match x with
-            | "-p" :: password :: x -> UserCred({email=email; password=password})
-            | _ -> UserCred({email=email; password=""})
-        | _ -> getToken()
+            flagParser {userCred with email=email} x
+        | "-p" :: password :: x ->
+            flagParser {userCred with password=password} x
+        | _ -> userCred
+
+    let userCredParser flags = flagParser {email=""; password=""} flags
 
     let authCall args =
         match args with
@@ -95,7 +97,7 @@ module Client =
             Req(h2wUrl "auth/token/verify", getToken())
             |> hitEndpoint
         | x ->
-            Req(h2wUrl "auth/token", flagParser x)
+            Req(h2wUrl "auth/token", UserCred(userCredParser x))
             |> hitEndpoint
 
     let call args =
