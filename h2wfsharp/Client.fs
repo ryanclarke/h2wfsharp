@@ -10,6 +10,7 @@ open System
 open System.IO
 
 module Client =
+    type DashboardProvider = JsonProvider<"Dashboard.json">
     type TokenProvider = JsonProvider<""" {"token":"guid string"} """>
     type ErrorProvider = JsonProvider<""" {"error":"http error"} """>
 
@@ -61,6 +62,11 @@ module Client =
 
     let getToken () = File.ReadAllLines(".h2wfsharptoken").[0] |> TokenCred
 
+    let bodyPreview (body:string) =
+        match body.Length with
+        | length when length < 80 -> sprintf "%s" (body.Substring (0, length))
+        | _ -> sprintf "%s ..." (body.Substring (0, 76))
+
     let handleResponse run =
         match run with
         | Response resp -> 
@@ -68,11 +74,13 @@ module Client =
             printfn "STATUS: %A" resp.StatusCode
             match resp.Body with
             | Text(body) -> 
-                printfn "BODY:   %A" body
+                printfn "BODY:   %A" (bodyPreview body)
                 match resp.StatusCode with
                 | 200 ->
                     match TokenProvider.Parse(body).Token with
-                    | "" -> ()
+                    | "" ->
+                        DashboardProvider.Parse(body).Dashboard.CurrentSteps
+                        |> printfn "STEPS:  %A"
                     | t -> storeToken t |> printfn "TOKEN:  %A"
                 | _ ->
                     ErrorProvider.Parse(body).Error

@@ -1,0 +1,414 @@
+﻿{
+  "dashboard": {
+    "top_week_steppers": [
+      {
+        "name": "Psmith S",
+        "steps": 60000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=P&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Stilton C",
+        "steps": 49000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=S&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Tuppy G",
+        "steps": 40000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=T&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Bertie W",
+        "steps": 38000,
+        "is_me": true,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=B&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Gussie F",
+        "steps": 37000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=G&w=36&h=36&fm=png&txttrack=0"
+      }
+    ],
+    "top_quarter_steppers": [
+      {
+        "name": "Gussie F",
+        "steps": 600000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=G&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Bingo L",
+        "steps": 590000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=B&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Tuppy G",
+        "steps": 500000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=T&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Bertie W",
+        "steps": 457000,
+        "is_me": true,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=B&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Stilton C",
+        "steps": 450000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=S&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Oofy P",
+        "steps": 440000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=O&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Chuffy C",
+        "steps": 430000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=C&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Archie M",
+        "steps": 420000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=A&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Boko F",
+        "steps": 400000,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=B&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Ginger W",
+        "steps": 100,
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=A&w=36&h=36&fm=png&txttrack=0"
+      }
+    ],
+    "step_neighbors": [
+      {
+        "name": "Psmith S",
+        "steps": 60000,
+        "steps_delta": "(+2200)",
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=P&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Stilton C",
+        "steps": 49000,
+        "steps_delta": "(+1100)",
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=S&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Tuppy G",
+        "steps": 40000,
+        "steps_delta": "(+2000)",
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=T&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Bertie W",
+        "steps": 38000,
+        "steps_delta": "",
+        "is_me": true,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=B&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Gussie F",
+        "steps": 37000,
+        "steps_delta": "(-1000)",
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=G&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Oofy P",
+        "steps": 36000,
+        "steps_delta": "(-2000)",
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=O&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Chuffy C",
+        "steps": 30000,
+        "steps_delta": "(-8000)",
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=C&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Archie M",
+        "steps": 20000,
+        "steps_delta": "(-18000)",
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=A&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Boko F",
+        "steps": 10000,
+        "steps_delta": "(-28000)",
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=B&w=36&h=36&fm=png&txttrack=0"
+      },
+      {
+        "name": "Ginger W",
+        "steps": 0,
+        "steps_delta": "(-38000)",
+        "is_me": false,
+        "image_url": "https://placeholdit.imgix.net/~text?txtsize=13&txt=A&w=36&h=36&fm=png&txttrack=0"
+      }
+    ],
+    "goals": [
+      {
+        "points": 1300,
+        "dollars": "$10",
+        "steps": 35000,
+        "is_current": false
+      },
+      {
+        "points": 2600,
+        "dollars": "$20",
+        "steps": 45000,
+        "is_current": false
+      },
+      {
+        "points": 4550,
+        "dollars": "$35",
+        "steps": 60000,
+        "is_current": false
+      },
+      {
+        "points": 7150,
+        "dollars": "$55",
+        "steps": 70000,
+        "is_current": false
+      },
+      {
+        "points": 10400,
+        "dollars": "$80",
+        "steps": 80000,
+        "is_current": true
+      },
+      {
+        "points": 14300,
+        "dollars": "$110",
+        "steps": 90000,
+        "is_current": false
+      },
+      {
+        "points": 18850,
+        "dollars": "$145",
+        "steps": 100000,
+        "is_current": false
+      }
+    ],
+    "user": {
+      "first_name": "Bertie",
+      "last_name": "Wooster",
+      "points_goal": 10400
+    },
+    "motivator": "7,714 steps to get back on track. Step it up! It's 42,000 steps to meet your weekly goal.",
+    "current_steps": 38000,
+    "quarter_points": 4500,
+    "last_sync_time": "2015-01-06 11:50:54 -0500",
+    "last_sync_steps": 5000,
+    "week_number": 6,
+    "days": [
+      {
+        "abbr": "mon",
+        "daily_goal": 11428,
+        "is_today": false
+      },
+      {
+        "abbr": "tue",
+        "daily_goal": 22857,
+        "is_today": false
+      },
+      {
+        "abbr": "wed",
+        "daily_goal": 34285,
+        "is_today": false
+      },
+      {
+        "abbr": "thu",
+        "daily_goal": 45714,
+        "is_today": true
+      },
+      {
+        "abbr": "fri",
+        "daily_goal": 57142,
+        "is_today": false
+      },
+      {
+        "abbr": "sat",
+        "daily_goal": 68571,
+        "is_today": false
+      },
+      {
+        "abbr": "sun",
+        "daily_goal": 80000,
+        "is_today": false
+      }
+    ],
+    "week_full_pct": 47.5,
+    "week_empty_pct": 57.1428571,
+    "quarter_points_progress_pct": 43.2692308,
+    "quarter_points_target_pct": 2.8846154,
+    "weekly_points_goal": 800,
+    "weekly_step_goal": 80000,
+    "weekly_summaries": [
+      {
+        "week_number": 1,
+        "points_for_week": 800,
+        "steps_for_week": 80000,
+        "name": "Bertie W",
+        "style": "summary_normal",
+        "show_points": true,
+        "show_steps": true
+      },
+      {
+        "week_number": 2,
+        "points_for_week": 1450,
+        "steps_for_week": 100000,
+        "name": "Bertie W",
+        "style": "summary_normal",
+        "show_points": true,
+        "show_steps": true
+      },
+      {
+        "week_number": 3,
+        "points_for_week": 550,
+        "steps_for_week": 70000,
+        "name": "Bertie W",
+        "style": "summary_normal",
+        "show_points": true,
+        "show_steps": true
+      },
+      {
+        "week_number": 4,
+        "points_for_week": 800,
+        "steps_for_week": 89000,
+        "name": "Bertie W",
+        "style": "summary_normal",
+        "show_points": true,
+        "show_steps": true
+      },
+      {
+        "week_number": 5,
+        "points_for_week": 800,
+        "steps_for_week": 80000,
+        "name": "Bertie W",
+        "style": "summary_normal",
+        "show_points": true,
+        "show_steps": true
+      },
+      {
+        "week_number": 6,
+        "points_for_week": 100,
+        "steps_for_week": 38000,
+        "name": "Bertie W",
+        "style": "summary_current",
+        "show_points": true,
+        "show_steps": true
+      },
+      {
+        "week_number": 7,
+        "points_for_week": 0,
+        "steps_for_week": 0,
+        "name": "Bertie W",
+        "style": "summary_future",
+        "show_points": false,
+        "show_steps": false
+      },
+      {
+        "week_number": 8,
+        "points_for_week": 0,
+        "steps_for_week": 0,
+        "name": "Bertie W",
+        "style": "summary_future",
+        "show_points": false,
+        "show_steps": false
+      },
+      {
+        "week_number": 9,
+        "points_for_week": 0,
+        "steps_for_week": 0,
+        "name": "Bertie W",
+        "style": "summary_future",
+        "show_points": false,
+        "show_steps": false
+      },
+      {
+        "week_number": 10,
+        "points_for_week": 0,
+        "steps_for_week": 0,
+        "name": "Bertie W",
+        "style": "summary_future",
+        "show_points": false,
+        "show_steps": false
+      },
+      {
+        "week_number": 11,
+        "points_for_week": 0,
+        "steps_for_week": 0,
+        "name": "Bertie W",
+        "style": "summary_future",
+        "show_points": false,
+        "show_steps": false
+      },
+      {
+        "week_number": 12,
+        "points_for_week": 0,
+        "steps_for_week": 0,
+        "name": "Bertie W",
+        "style": "summary_future",
+        "show_points": false,
+        "show_steps": false
+      },
+      {
+        "week_number": 13,
+        "points_for_week": 0,
+        "steps_for_week": 0,
+        "name": "Bertie W",
+        "style": "summary_future",
+        "show_points": false,
+        "show_steps": false
+      }
+    ],
+    "today_steps": 5000,
+    "today_step_goals": [
+      {
+        "steps": 2000,
+        "points": 100,
+        "is_accomplished": true
+      },
+      {
+        "steps": 7714,
+        "on_track": {
+          "abbr": "thu",
+          "daily_goal": 45714,
+          "is_today": true
+        },
+        "is_accomplished": false
+      },
+      {
+        "steps": 12000,
+        "points": 200,
+        "is_accomplished": false
+      }
+    ],
+    "quarter_number": 4,
+    "previous_quarter_daily_average": 0,
+    "q5_daily_summaries": [],
+    "q5_day_number": 0,
+    "q5_reward": null
+  }
+}
