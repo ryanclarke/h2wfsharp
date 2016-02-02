@@ -14,9 +14,6 @@ module Main =
     let main argv =
         let args = argv |> Array.toList
         match args with
-        | "test"::xs ->
-            match xs with
-            | email::password::xss -> Test.RunAll email password
-            | _ -> Test.RunBadCases()
+        | "test"::xs -> Test.Run xs
         | _ -> Client.Start args
         0 // return an integer exit code

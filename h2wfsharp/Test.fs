@@ -28,8 +28,20 @@ module Test =
         RunCase ["auth"; "-e"; email; "-p"; password]
         RunCase ["auth"; "verify"]
 
+    let RunDashboardCases () =
+        RunCase ["dashboard"]
+
     let RunAll email password =
         RunCase []
         RunBadCases()
         RunAuthCases email password
-        RunCase ["dashboard"]
+        RunDashboardCases()
+
+    let Run args =
+        match args with
+        | "all" :: email :: password :: xs -> RunAll email password
+        | "auth" :: email :: password :: xs -> RunAuthCases email password
+        | "bad" :: xs -> RunBadCases()
+        | "dashboard" :: xs -> RunDashboardCases()
+        | email :: password :: xs -> RunAll email password
+        | _ -> ()
