@@ -79,8 +79,9 @@ module Client =
                 | 200 ->
                     match TokenProvider.Parse(body).Token with
                     | "" ->
-                        DashboardProvider.Parse(body).Dashboard.CurrentSteps
-                        |> printfn "STEPS:  %A"
+                        let steps = DashboardProvider.Parse(body).Dashboard.CurrentSteps
+                        String.Format("{0:N0}", steps)
+                        |> printfn "STEPS:  %s"
                     | t -> storeToken t |> printfn "TOKEN:  %A"
                 | _ ->
                     ErrorProvider.Parse(body).Error
