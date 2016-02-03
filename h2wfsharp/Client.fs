@@ -8,6 +8,7 @@ open FSharp.Data
 open FSharp.Data.JsonExtensions
 open System
 open System.IO
+open System.Linq
 
 module Client =
     type DashboardProvider = JsonProvider<"Dashboard.json">
@@ -72,10 +73,32 @@ module Client =
         |> storeToken
         |> printfn "TOKEN:  %A"
 
+    let niceNumber format (n:'a) = String.Format(format, n)
+    let niceInt (i:int) = niceNumber "{0:N0}" i
+    let nicePct (d:decimal) = niceNumber "{0:N}%" d
+
     let dashboardHandler body =
-        let steps = DashboardProvider.Parse(body).Dashboard.CurrentSteps
-        String.Format("{0:N0}", steps)
+        DashboardProvider.Parse(body).Dashboard.CurrentSteps
+        |> niceInt
         |> printfn "STEPS:  %s"
+
+    let todayPctString (dash:DashboardProvider.Dashboard) =
+        let onTrackToday = dash.TodayStepGoals.Where(fun x -> x.OnTrack.IsSome).Single().Steps
+        match dash.TodaySteps with
+        | t when t > 0 ->
+            (decimal onTrackToday / decimal t) |> nicePct
+        | _ -> "0.00%"
+
+    let quickstatsHandler body =
+        let dash = DashboardProvider.Parse(body).Dashboard
+
+        let todaySteps = dash.TodaySteps |> niceInt
+        let todayPct = todayPctString dash
+        let weekSteps = dash.CurrentSteps |> niceInt
+        let weekPct = dash.WeekFullPct |> nicePct
+
+        sprintf "today: %s (%s); week: %s (%s)" todaySteps todayPct weekSteps weekPct
+        |> printfn "STATS:  %s"
 
     let handleResponse onSuccess run =
         match run with
@@ -115,6 +138,7 @@ module Client =
 
     let dashboardResp args =
         match args with
+        | "quickstats" :: x -> handleResponse quickstatsHandler
         | _ -> handleResponse dashboardHandler
 
     let Start args =

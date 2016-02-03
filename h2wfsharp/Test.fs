@@ -30,6 +30,7 @@ module Test =
 
     let RunDashboardCases () =
         RunCase ["dashboard"]
+        RunCase ["dashboard"; "quickstats"]
 
     let RunAll email password =
         RunCase []
