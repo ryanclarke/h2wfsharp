@@ -15,8 +15,8 @@ module Client =
     type ErrorProvider = JsonProvider<""" {"error":"http error"} """>
 
     type RunResponse =
-        | Response of FSharp.Data.HttpResponse
-        | Nothing of unit
+    | Response of FSharp.Data.HttpResponse
+    | Nothing of unit
 
     type EmailAndPassword = {
         email: string
@@ -26,8 +26,8 @@ module Client =
     type Token = string
 
     type Credentials =
-        | UserCred of EmailAndPassword
-        | TokenCred of Token
+    | UserCred of EmailAndPassword
+    | TokenCred of Token
 
     type Req(url: string, credentials: Credentials) =
         let credString cred =
@@ -67,7 +67,17 @@ module Client =
         | length when length < 80 -> sprintf "%s" (body.Substring (0, length))
         | _ -> sprintf "%s ..." (body.Substring (0, 76))
 
-    let handleResponse run =
+    let tokenHandler body =
+        TokenProvider.Parse(body).Token
+        |> storeToken
+        |> printfn "TOKEN:  %A"
+
+    let dashboardHandler body =
+        let steps = DashboardProvider.Parse(body).Dashboard.CurrentSteps
+        String.Format("{0:N0}", steps)
+        |> printfn "STEPS:  %s"
+
+    let handleResponse onSuccess run =
         match run with
         | Response resp -> 
             printfn "URL:    %A" resp.ResponseUrl
@@ -76,13 +86,7 @@ module Client =
             | Text(body) -> 
                 printfn "BODY:   %A" (bodyPreview body)
                 match resp.StatusCode with
-                | 200 ->
-                    match TokenProvider.Parse(body).Token with
-                    | "" ->
-                        let steps = DashboardProvider.Parse(body).Dashboard.CurrentSteps
-                        String.Format("{0:N0}", steps)
-                        |> printfn "STEPS:  %s"
-                    | t -> storeToken t |> printfn "TOKEN:  %A"
+                | 200 -> onSuccess body
                 | _ ->
                     ErrorProvider.Parse(body).Error
                     |> printfn "ERROR:  %A"
@@ -102,21 +106,25 @@ module Client =
 
     let userCredParser flags = flagParser {email=""; password=""} flags
 
-    let authCall args =
+    let authReq args =
         match args with
         | "verify" :: x ->
             Req(h2wUrl "auth/token/verify", getToken())
-            |> hitEndpoint
         | x ->
             Req(h2wUrl "auth/token", UserCred(userCredParser x))
-            |> hitEndpoint
 
-    let call args =
+    let dashboardResp args =
         match args with
-        | "auth" :: x -> authCall x
-        | "dashboard" :: x ->
+        | _ -> handleResponse dashboardHandler
+
+    let Start args =
+        match args with
+        | "auth" :: x ->
+            authReq x
+            |> hitEndpoint
+            |> handleResponse tokenHandler
+        | "dashboard" :: x -> 
             Req(h2wUrl "dashboard", getToken())
             |> hitEndpoint
-        | _ -> Nothing()
-
-    let Start args = args |> call |> handleResponse
+            |> dashboardResp x
+        | _ -> Nothing() |> handleResponse (fun s -> ())
