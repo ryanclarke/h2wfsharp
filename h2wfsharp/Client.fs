@@ -89,7 +89,7 @@ module Client =
                 match resp.StatusCode with
                 | 204 -> printfn "BODY:   <NO CONTENT>"
                 | _ -> printfn "BODY:   %A" body
-        | _ -> helpText()
+        | Nothing _ -> helpText()
 
     let rec flagParser userCred flags =
         match flags with
