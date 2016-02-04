@@ -75,25 +75,22 @@ module Client =
 
     let niceNumber format (n:'a) = String.Format(format, n)
     let niceInt (i:int) = niceNumber "{0:N0}" i
-    let nicePct (d:decimal) = niceNumber "{0:N}%" d
+    let nicePct (d:decimal) = niceNumber "{0:N2}%" d
 
     let dashboardHandler body =
         DashboardProvider.Parse(body).Dashboard.CurrentSteps
         |> niceInt
         |> printfn "STEPS:  %s"
 
-    let todayPctString (dash:DashboardProvider.Dashboard) =
+    let todayPercent (dash:DashboardProvider.Dashboard) =
         let onTrackToday = dash.TodayStepGoals.Where(fun x -> x.OnTrack.IsSome).Single().Steps
-        match dash.TodaySteps with
-        | t when t > 0 ->
-            (decimal onTrackToday / decimal t) |> nicePct
-        | _ -> "0.00%"
+        decimal dash.TodaySteps / decimal onTrackToday
 
     let quickstatsHandler body =
         let dash = DashboardProvider.Parse(body).Dashboard
 
         let todaySteps = dash.TodaySteps |> niceInt
-        let todayPct = todayPctString dash
+        let todayPct = todayPercent dash |> nicePct
         let weekSteps = dash.CurrentSteps |> niceInt
         let weekPct = dash.WeekFullPct |> nicePct
 
@@ -102,11 +99,11 @@ module Client =
 
     let handleResponse onSuccess run =
         match run with
-        | Response resp -> 
+        | Response resp ->
             printfn "URL:    %A" resp.ResponseUrl
             printfn "STATUS: %A" resp.StatusCode
             match resp.Body with
-            | Text(body) -> 
+            | Text(body) ->
                 printfn "BODY:   %A" (bodyPreview body)
                 match resp.StatusCode with
                 | 200 -> onSuccess body
