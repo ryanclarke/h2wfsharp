@@ -22,19 +22,24 @@ module Client =
     type EmailAndPassword = {
         email: string
         password: string
-    }
+        }
 
     type Token = string
+    type TokenFile = string
 
     type Credentials =
     | UserCred of EmailAndPassword
     | TokenCred of Token
+    | TokenFile of TokenFile
+
+    let getToken tokenFile = File.ReadAllLines(tokenFile).[0]
 
     type Req(url: string, credentials: Credentials) =
         let credString cred =
             match cred with
             | UserCred({email=e; password=p}) -> sprintf "%s:%s" e p
             | TokenCred(t) -> sprintf "%s:" t
+            | TokenFile(f) -> getToken f |> sprintf "%s:"
 
         let basic =
             credentials
@@ -57,20 +62,19 @@ module Client =
 
     let helpText () = printfn "You're gonna need help to do this right."
 
-    let storeToken token =
-        File.WriteAllLines(".h2wfsharptoken", [token])
+    let storeToken tokenFile token =
+        File.WriteAllLines(tokenFile, [token])
         token
 
-    let getToken () = File.ReadAllLines(".h2wfsharptoken").[0] |> TokenCred
 
     let bodyPreview (body:string) =
         match body.Length with
         | length when length < 80 -> sprintf "%s" (body.Substring (0, length))
         | _ -> sprintf "%s ..." (body.Substring (0, 76))
 
-    let tokenHandler body =
+    let tokenHandler tokenFile body =
         TokenProvider.Parse(body).Token
-        |> storeToken
+        |> storeToken tokenFile
         |> printfn "TOKEN:  %A"
 
     let niceNumber format (n:'a) = String.Format(format, n)
@@ -126,26 +130,50 @@ module Client =
 
     let userCredParser flags = flagParser {email=""; password=""} flags
 
-    let authReq args =
-        match args with
-        | "verify" :: x ->
-            Req(h2wUrl "auth/token/verify", getToken())
-        | x ->
-            Req(h2wUrl "auth/token", UserCred(userCredParser x))
-
     let dashboardResp args =
         match args with
-        | "quickstats" :: x -> handleResponse quickstatsHandler
-        | _ -> handleResponse dashboardHandler
+        | "quickstats" :: x -> quickstatsHandler
+        | _ -> dashboardHandler
+
+    type Command = {
+        endpoint: string
+        email: string
+        password: string
+        token: string
+        file: string
+        cred: Credentials
+        handler: string -> unit
+        }
+
+    let rec parseFlags (command:Command) args =
+        match args with
+        | "-e" :: email :: x -> 
+            parseFlags {command with email=email} x
+        | "-p" :: password :: x ->
+            parseFlags {command with password=password} x
+        | "-t" :: token :: x ->
+            parseFlags {command with token=token} x
+        | "-f" :: file :: x ->
+            parseFlags {command with file=file} x
+        | _ -> command
+
+    let setUserCred command = {command with cred=UserCred({email=command.email; password=command.password})}
+    let setTokenFile command = {command with cred=TokenFile(command.file)}
+
+    let parse (command:Command) args =
+        match args with
+        | "auth" :: "verify" :: x -> parseFlags {command with endpoint="auth/token/verify"} x |> setTokenFile
+        | "auth" :: x -> parseFlags {command with endpoint="auth/token"; handler=(tokenHandler command.file)} x |> setUserCred
+        | "dashboard" :: "quickstats" :: x -> parseFlags {command with endpoint="dashboard"; handler=quickstatsHandler} x |> setTokenFile
+        | "dashboard" :: x -> parseFlags {command with endpoint="dashboard"; handler=dashboardHandler} x |> setTokenFile
+        | _ -> command
 
     let Start args =
-        match args with
-        | "auth" :: x ->
-            authReq x
-            |> hitEndpoint
-            |> handleResponse tokenHandler
-        | "dashboard" :: x -> 
-            Req(h2wUrl "dashboard", getToken())
-            |> hitEndpoint
-            |> dashboardResp x
-        | _ -> Nothing() |> handleResponse (fun s -> ())
+        let command = parse {endpoint=""; email=""; password=""; token=""; file=".h2wfsharptoken"; cred=TokenFile(".h2wfsharptoken"); handler=(fun s -> ())} args
+        match command.endpoint with
+        | "" -> Nothing() |> handleResponse command.handler
+        | _ ->
+            let req = Req(h2wUrl command.endpoint, command.cred)
+            hitEndpoint req
+            |> handleResponse command.handler
+
