@@ -79,7 +79,7 @@ module Client =
 
     let niceNumber format (n:'a) = String.Format(format, n)
     let niceInt (i:int) = niceNumber "{0:N0}" i
-    let nicePct (d:decimal) = d * 100m |> niceNumber "{0:N2}%"
+    let nicePct (d:decimal) = niceNumber "{0:N2}%" d
 
     let dashboardHandler body =
         DashboardProvider.Parse(body).Dashboard.CurrentSteps
@@ -88,7 +88,7 @@ module Client =
 
     let todayPercent (dash:DashboardProvider.Dashboard) =
         let onTrackToday = dash.TodayStepGoals.Where(fun x -> x.OnTrack.IsSome).Single().Steps
-        decimal dash.TodaySteps / decimal onTrackToday
+        decimal dash.TodaySteps / decimal onTrackToday * 100m
 
     let quickstatsHandler body =
         let dash = DashboardProvider.Parse(body).Dashboard
@@ -119,21 +119,6 @@ module Client =
                 | 204 -> printfn "BODY:   <NO CONTENT>"
                 | _ -> printfn "BODY:   %A" body
         | Nothing _ -> helpText()
-
-    let rec flagParser userCred flags =
-        match flags with
-        | "-e" :: email :: x ->
-            flagParser {userCred with email=email} x
-        | "-p" :: password :: x ->
-            flagParser {userCred with password=password} x
-        | _ -> userCred
-
-    let userCredParser flags = flagParser {email=""; password=""} flags
-
-    let dashboardResp args =
-        match args with
-        | "quickstats" :: x -> quickstatsHandler
-        | _ -> dashboardHandler
 
     type Command = {
         endpoint: string
