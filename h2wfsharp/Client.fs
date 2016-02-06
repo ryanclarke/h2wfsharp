@@ -79,7 +79,7 @@ module Client =
 
     let niceNumber format (n:'a) = String.Format(format, n)
     let niceInt (i:int) = niceNumber "{0:N0}" i
-    let nicePct (d:decimal) = niceNumber "{0:N2}%" d
+    let nicePct (d:decimal) = d * 100m |> niceNumber "{0:N2}%"
 
     let dashboardHandler body =
         DashboardProvider.Parse(body).Dashboard.CurrentSteps
