@@ -3,12 +3,6 @@
 
 namespace H2W
 
-open FSharp.Core
-open FSharp.Data
-open FSharp.Data.JsonExtensions
-open System
-open System.IO
-
 module Test =
     let RunCase args =
         printfn "ARGS:   %A" args

@@ -5,7 +5,6 @@ namespace H2W
 
 open FSharp.Core
 open FSharp.Data
-open FSharp.Data.JsonExtensions
 open System
 open System.IO
 open System.Linq
@@ -20,8 +19,8 @@ module Client =
     | Nothing of unit
 
     type EmailAndPassword = {
-        email: string
-        password: string
+        Email: string
+        Password: string
         }
 
     type Token = string
@@ -37,7 +36,7 @@ module Client =
     type Req(url: string, credentials: Credentials) =
         let credString cred =
             match cred with
-            | UserCred({email=e; password=p}) -> sprintf "%s:%s" e p
+            | UserCred({Email=e; Password=p}) -> sprintf "%s:%s" e p
             | TokenCred(t) -> sprintf "%s:" t
             | TokenFile(f) -> getToken f |> sprintf "%s:"
 
@@ -121,44 +120,44 @@ module Client =
         | Nothing _ -> helpText()
 
     type Command = {
-        endpoint: string
-        email: string
-        password: string
-        token: string
-        file: string
-        cred: Credentials
-        handler: string -> unit
+        Endpoint: string
+        Email: string
+        Password: string
+        Token: string
+        File: string
+        Cred: Credentials
+        Handler: string -> unit
         }
 
     let rec parseFlags (command:Command) args =
         match args with
         | "-e" :: email :: x -> 
-            parseFlags {command with email=email} x
+            parseFlags {command with Email=email} x
         | "-p" :: password :: x ->
-            parseFlags {command with password=password} x
+            parseFlags {command with Password=password} x
         | "-t" :: token :: x ->
-            parseFlags {command with token=token} x
+            parseFlags {command with Token=token} x
         | "-f" :: file :: x ->
-            parseFlags {command with file=file} x
+            parseFlags {command with File=file} x
         | _ -> command
 
-    let setUserCred command = {command with cred=UserCred({email=command.email; password=command.password})}
-    let setTokenFile command = {command with cred=TokenFile(command.file)}
+    let setUserCred command = {command with Cred=UserCred({Email=command.Email; Password=command.Password})}
+    let setTokenFile command = {command with Cred=TokenFile(command.File)}
 
     let parse (command:Command) args =
         match args with
-        | "auth" :: "verify" :: x -> parseFlags {command with endpoint="auth/token/verify"} x |> setTokenFile
-        | "auth" :: x -> parseFlags {command with endpoint="auth/token"; handler=(tokenHandler command.file)} x |> setUserCred
-        | "dashboard" :: "quickstats" :: x -> parseFlags {command with endpoint="dashboard"; handler=quickstatsHandler} x |> setTokenFile
-        | "dashboard" :: x -> parseFlags {command with endpoint="dashboard"; handler=dashboardHandler} x |> setTokenFile
+        | "auth" :: "verify" :: x -> parseFlags {command with Endpoint="auth/token/verify"} x |> setTokenFile
+        | "auth" :: x -> parseFlags {command with Endpoint="auth/token"; Handler=(tokenHandler command.File)} x |> setUserCred
+        | "dashboard" :: "quickstats" :: x -> parseFlags {command with Endpoint="dashboard"; Handler=quickstatsHandler} x |> setTokenFile
+        | "dashboard" :: x -> parseFlags {command with Endpoint="dashboard"; Handler=dashboardHandler} x |> setTokenFile
         | _ -> command
 
     let Start args =
-        let command = parse {endpoint=""; email=""; password=""; token=""; file=".h2wfsharptoken"; cred=TokenFile(".h2wfsharptoken"); handler=(fun s -> ())} args
-        match command.endpoint with
-        | "" -> Nothing() |> handleResponse command.handler
+        let command = parse {Endpoint=""; Email=""; Password=""; Token=""; File=".h2wfsharptoken"; Cred=TokenFile(".h2wfsharptoken"); Handler=(fun s -> ())} args
+        match command.Endpoint with
+        | "" -> Nothing() |> handleResponse command.Handler
         | _ ->
-            let req = Req(h2wUrl command.endpoint, command.cred)
+            let req = Req(h2wUrl command.Endpoint, command.Cred)
             hitEndpoint req
-            |> handleResponse command.handler
+            |> handleResponse command.Handler
 
