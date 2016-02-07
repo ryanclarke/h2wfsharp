@@ -129,35 +129,42 @@ module Client =
         Handler: string -> unit
         }
 
-    let rec parseFlags (command:Command) args =
+    let rec parseFlags args (command:Command) =
         match args with
         | "-e" :: email :: x -> 
-            parseFlags {command with Email=email} x
+            parseFlags x {command with Email=email}
         | "-p" :: password :: x ->
-            parseFlags {command with Password=password} x
+            parseFlags x {command with Password=password}
         | "-t" :: token :: x ->
-            parseFlags {command with Token=token} x
+            parseFlags x {command with Token=token}
         | "-f" :: file :: x ->
-            parseFlags {command with File=file} x
+            parseFlags x {command with File=file}
         | _ -> command
 
-    let setUserCred command = {command with Cred=UserCred({Email=command.Email; Password=command.Password})}
-    let setTokenFile command = {command with Cred=TokenFile(command.File)}
+    let withUserCred command = {command with Cred=UserCred({Email=command.Email; Password=command.Password})}
+    let withTokenFile command = {command with Cred=TokenFile(command.File)}
+    let withUrl url command = {command with Endpoint=(h2wUrl url)}
+    let withHandler handler command = {command with Handler=handler}
 
-    let parse (command:Command) args =
+    let parse args =
+        let command = {Endpoint=""; Email=""; Password=""; Token=""; File=".h2wfsharptoken"; Cred=TokenFile(".h2wfsharptoken"); Handler=(fun s -> ())}
         match args with
-        | "auth" :: "verify" :: x -> parseFlags {command with Endpoint="auth/token/verify"} x |> setTokenFile
-        | "auth" :: x -> parseFlags {command with Endpoint="auth/token"; Handler=(tokenHandler command.File)} x |> setUserCred
-        | "dashboard" :: "quickstats" :: x -> parseFlags {command with Endpoint="dashboard"; Handler=quickstatsHandler} x |> setTokenFile
-        | "dashboard" :: x -> parseFlags {command with Endpoint="dashboard"; Handler=dashboardHandler} x |> setTokenFile
+        | "auth" :: "verify" :: x ->
+            command |> parseFlags x |> withUrl "auth/token/verify" |> withTokenFile
+        | "auth" :: x ->
+            command |> parseFlags x |> withUrl "auth/token" |> withHandler (tokenHandler command.File) |> withUserCred
+        | "dashboard" :: "quickstats" :: x ->
+            command |> parseFlags x |> withUrl "dashboard" |> withHandler quickstatsHandler |> withTokenFile
+        | "dashboard" :: x ->
+            command |> parseFlags x |> withUrl "dashboard" |> withHandler dashboardHandler |> withTokenFile
         | _ -> command
 
     let Start args =
-        let command = parse {Endpoint=""; Email=""; Password=""; Token=""; File=".h2wfsharptoken"; Cred=TokenFile(".h2wfsharptoken"); Handler=(fun s -> ())} args
+        let command = parse args
         match command.Endpoint with
         | "" -> Nothing() |> handleResponse command.Handler
         | _ ->
-            let req = Req(h2wUrl command.Endpoint, command.Cred)
+            let req = Req(command.Endpoint, command.Cred)
             hitEndpoint req
             |> handleResponse command.Handler
 
