@@ -8,6 +8,6 @@ module Main =
     let main argv =
         let args = argv |> Array.toList
         match args with
-        | "test"::xs -> Test.Run xs
+        | "test" :: xs -> Test.Run xs
         | _ -> Client.Start args
         0 // return an integer exit code

@@ -65,7 +65,6 @@ module Client =
         File.WriteAllLines(tokenFile, [token])
         token
 
-
     let bodyPreview (body:string) =
         match body.Length with
         | length when length < 80 -> sprintf "%s" (body.Substring (0, length))
@@ -132,13 +131,13 @@ module Client =
 
     let rec parseFlags args (command:Command) =
         match args with
-        | "-e" :: email :: x -> 
+        | ("-e" | "--email") :: email :: x -> 
             parseFlags x {command with Email=email}
-        | "-p" :: password :: x ->
+        | ("-p" | "--password") :: password :: x ->
             parseFlags x {command with Password=password}
-        | "-t" :: token :: x ->
+        | ("-t" | "--token") :: token :: x ->
             parseFlags x {command with Token=token}
-        | "-f" :: file :: x ->
+        | ("-f" | "--file") :: file :: x ->
             parseFlags x {command with File=file}
         | ("-q" | "--quickstats") :: x -> parseFlags x {command with Quickstats=true}
         | _ -> command

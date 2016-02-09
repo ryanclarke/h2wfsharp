@@ -11,20 +11,14 @@ module Test =
     
     let RunBadCases () =
         RunCase ["garbage"]
-        RunCase ["garbage"; "auth"]
+        RunCase ["auth"; "--email"; "bademail"; "--password"; "badpassword"]
 
     let RunAuthCases email password =
-        RunCase ["auth"]
-        RunCase ["auth"; email]
-        RunCase ["auth"; email; "badpass"]
-        RunCase ["auth"; "bademail"; password]
-        RunCase ["auth"; email; password]
-        RunCase ["auth"; "-e"; email; "-p"; password]
+        RunCase ["auth"; "--email"; email; "--password"; password]
         RunCase ["auth"; "verify"]
 
     let RunDashboardCases () =
         RunCase ["dashboard"]
-        RunCase ["dashboard"; "-q"]
         RunCase ["dashboard"; "--quickstats"]
 
     let RunAll email password =
