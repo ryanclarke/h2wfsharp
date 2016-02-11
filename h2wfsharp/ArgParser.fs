@@ -4,7 +4,7 @@ open Client
 open Fiat
 
 module ArgParser =
-    let rec parseFlags args (fiat:Fiat) =
+    let rec private parseFlags args (fiat:Fiat) =
         match args with
         | ("-e" | "--email") :: email :: x -> 
             parseFlags x {fiat with Email=email}
@@ -37,4 +37,3 @@ module ArgParser =
             |> withTokenFile
             |> withDashboardHandler
         | _ -> DefaultFiat
-

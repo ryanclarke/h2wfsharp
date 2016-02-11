@@ -4,8 +4,8 @@ module Test =
     let RunCase args =
         printfn "ARGS:   %A" args
         App.Run args
-        printfn "" 
-    
+        printfn ""
+
     let RunBadCases () =
         RunCase ["garbage"]
         RunCase ["auth"; "--email"; "bademail"; "--password"; "badpassword"]

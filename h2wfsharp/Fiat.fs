@@ -1,7 +1,7 @@
 ﻿namespace H2W
 
 open Client
-    
+
 module Fiat =
     type Fiat = {
         Endpoint: string

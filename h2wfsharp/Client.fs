@@ -50,7 +50,7 @@ module Client =
 
     let h2wUrl endpoint = sprintf "https://h2w.cc/api/v1/%s" endpoint
 
-    let hitEndpoint (req:Req) =
+    let HitEndpoint (req:Req) =
         Http.Request(req.Url,
             headers = [ "X-H2W-Client-ID", "0"; "Authorization", req.BasicAuthorization ],
             silentHttpErrors = true )
@@ -96,7 +96,7 @@ module Client =
         sprintf "today: %s (%s); week: %s (%s)" todaySteps todayPct weekSteps weekPct
         |> printfn "STATS:  %s"
 
-    let handleResponse onSuccess run =
+    let HandleResponse onSuccess run =
         match run with
         | Response resp ->
             printfn "URL:    %A" resp.ResponseUrl
