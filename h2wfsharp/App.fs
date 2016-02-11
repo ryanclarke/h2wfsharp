@@ -1,15 +1,11 @@
 ﻿namespace H2W
 
 module App =
-    open ArgParser
-    open Client
-    open Fiat
-
     let Run args =
-        let fiat = Parse args
+        let fiat = ArgParser.Parse args
         match fiat.Endpoint with
-        | "" -> Nothing() |> HandleResponse fiat.Handler
+        | "" -> ResponseHandler.helpText()
         | _ ->
-            Req(fiat.Endpoint, fiat.Cred)
-            |> HitEndpoint
-            |> HandleResponse fiat.Handler
+            Client.Req(fiat.Endpoint, fiat.Cred)
+            |> Client.HitEndpoint
+            |> ResponseHandler.HandleResponse fiat.Handler

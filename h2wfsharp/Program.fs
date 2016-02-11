@@ -3,8 +3,7 @@
 module Main =
     [<EntryPoint>]
     let main argv =
-        let args = argv |> Array.toList
-        match args with
+        match argv |> Array.toList with
         | "test" :: xs -> Test.Run xs
-        | _ -> App.Run args
+        | xs -> App.Run xs
         0 // return an integer exit code

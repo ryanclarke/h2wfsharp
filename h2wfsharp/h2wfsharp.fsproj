@@ -59,6 +59,7 @@
     <Content Include="packages.config" />
     <None Include="Dashboard.json" />
     <Compile Include="Client.fs" />
+    <Compile Include="Provider.fs" />
     <Compile Include="Fiat.fs" />
     <Compile Include="ArgParser.fs" />
     <Compile Include="App.fs" />

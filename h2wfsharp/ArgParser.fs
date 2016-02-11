@@ -1,9 +1,9 @@
 ﻿namespace H2W
 
-open Client
-open Fiat
-
 module ArgParser =
+    open Client
+    open Fiat
+
     let rec private parseFlags args (fiat:Fiat) =
         match args with
         | ("-e" | "--email") :: email :: x -> 
