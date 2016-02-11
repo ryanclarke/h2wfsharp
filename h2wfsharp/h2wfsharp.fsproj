@@ -57,10 +57,13 @@
     <Compile Include="AssemblyInfo.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
+    <None Include="Dashboard.json" />
     <Compile Include="Client.fs" />
+    <Compile Include="Fiat.fs" />
+    <Compile Include="ArgParser.fs" />
+    <Compile Include="App.fs" />
     <Compile Include="Test.fs" />
     <Compile Include="Program.fs" />
-    <None Include="Dashboard.json" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Data">

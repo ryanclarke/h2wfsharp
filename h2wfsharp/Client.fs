@@ -1,7 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
-// See the 'F# Tutorial' project for more help.
-
-namespace H2W
+﻿namespace H2W
 
 open FSharp.Core
 open FSharp.Data
@@ -117,79 +114,3 @@ module Client =
                 | 204 -> printfn "BODY:   <NO CONTENT>"
                 | _ -> printfn "BODY:   %A" body
         | Nothing _ -> helpText()
-
-    type Command = {
-        Endpoint: string
-        Email: string
-        Password: string
-        Token: string
-        File: string
-        Cred: Credentials
-        Quickstats: bool
-        Handler: string -> unit
-        }
-
-    let rec parseFlags args (command:Command) =
-        match args with
-        | ("-e" | "--email") :: email :: x -> 
-            parseFlags x {command with Email=email}
-        | ("-p" | "--password") :: password :: x ->
-            parseFlags x {command with Password=password}
-        | ("-t" | "--token") :: token :: x ->
-            parseFlags x {command with Token=token}
-        | ("-f" | "--file") :: file :: x ->
-            parseFlags x {command with File=file}
-        | ("-q" | "--quickstats") :: x -> parseFlags x {command with Quickstats=true}
-        | _ -> command
-
-    let withUserCred command = {command with Cred=UserCred({Email=command.Email; Password=command.Password})}
-    let withTokenFile command = {command with Cred=TokenFile(command.File)}
-    let withUrl url command = {command with Endpoint=(h2wUrl url)}
-    let withHandler handler command = {command with Handler=handler}
-    let withTokenHandler command = {command with Handler=(tokenHandler command.File)}
-    let withDashboardHandler command =
-        match command.Quickstats with
-        | true -> withHandler quickstatsHandler command
-        | false -> withHandler dashboardHandler command
-
-    let defaultCommand = {
-        Endpoint="";
-        Email="";
-        Password="";
-        Token="";
-        File=".h2wfsharptoken";
-        Cred=TokenFile(".h2wfsharptoken");
-        Quickstats=false;
-        Handler=(fun s -> ())
-        }
-
-    let parse args command =
-        match args with
-        | "auth" :: "verify" :: x ->
-            command
-            |> withUrl "auth/token/verify"
-            |> parseFlags x
-            |> withTokenFile
-        | "auth" :: x ->
-            command
-            |> withUrl "auth/token"
-            |> parseFlags x
-            |> withUserCred
-            |> withTokenHandler
-        | "dashboard" :: x ->
-            command
-            |> withUrl "dashboard"
-            |> parseFlags x
-            |> withTokenFile
-            |> withDashboardHandler
-        | _ -> command
-
-    let Start args =
-        let command = defaultCommand |> parse args
-        match command.Endpoint with
-        | "" -> Nothing() |> handleResponse command.Handler
-        | _ ->
-            let req = Req(command.Endpoint, command.Cred)
-            hitEndpoint req
-            |> handleResponse command.Handler
-

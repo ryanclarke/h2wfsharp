@@ -1,12 +1,9 @@
-﻿// Learn more about F# at http://fsharp.org
-// See the 'F# Tutorial' project for more help.
-
-namespace H2W
+﻿namespace H2W
 
 module Test =
     let RunCase args =
         printfn "ARGS:   %A" args
-        Client.Start args
+        App.Run args
         printfn "" 
     
     let RunBadCases () =
