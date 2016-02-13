@@ -4,7 +4,7 @@ module Fiat =
     open Client
     open System.IO
 
-    type InvalidFiatError = {
+    type Error = {
         Error: string
         Description: string
     }
@@ -18,7 +18,7 @@ module Fiat =
         Cred: Credentials
         Quickstats: bool
         Handler: string -> unit
-        InvalidFiat: InvalidFiatError option
+        InvalidFiat: Error option
     }
 
     let getToken tokenFile = File.ReadAllLines(tokenFile).[0]
