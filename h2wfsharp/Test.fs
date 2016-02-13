@@ -8,6 +8,7 @@ module Test =
 
     let RunBadCases () =
         RunCase ["garbage"]
+        RunCase ["dashboard"; "--invalid-arg"]
         RunCase ["auth"; "--email"; "bademail"; "--password"; "badpassword"]
 
     let RunAuthCases email password =

@@ -4,35 +4,38 @@ module ArgParser =
     open Fiat
 
     let Parse args =
-        let rec parseFlags args (fiat:Fiat) =
-            match args with
+        let rec parseFlags (fiat:Fiat) =
+            function
+            | [] -> fiat
             | ("-e" | "--email") :: email :: x -> 
-                parseFlags x {fiat with Email=email}
+                parseFlags {fiat with Email=email} x
             | ("-p" | "--password") :: password :: x ->
-                parseFlags x {fiat with Password=password}
+                parseFlags {fiat with Password=password} x
             | ("-t" | "--token") :: token :: x ->
-                parseFlags x {fiat with Token=token}
+                parseFlags {fiat with Token=token} x
             | ("-f" | "--file") :: file :: x ->
-                parseFlags x {fiat with File=file}
-            | ("-q" | "--quickstats") :: x -> parseFlags x {fiat with Quickstats=true}
-            | _ -> fiat
+                parseFlags {fiat with File=file} x
+            | ("-q" | "--quickstats") :: x ->
+                parseFlags {fiat with Quickstats=true} x
+            | x ->
+                fiat |> asInvalid "Invalid Arg" x.[0]
 
         match args with
         | "auth" :: "verify" :: x ->
-            DefaultFiat
+            parseFlags DefaultFiat x
             |> withUrl "auth/token/verify"
-            |> parseFlags x
             |> withTokenFile
         | "auth" :: x ->
-            DefaultFiat
+            parseFlags DefaultFiat x
             |> withUrl "auth/token"
-            |> parseFlags x
             |> withUserCred
             |> withTokenHandler
         | "dashboard" :: x ->
-            DefaultFiat
+            parseFlags DefaultFiat x
             |> withUrl "dashboard"
-            |> parseFlags x
             |> withTokenFile
             |> withDashboardHandler
-        | _ -> DefaultFiat
+        | [] ->
+            DefaultFiat |> asInvalid "No Endpoint" "Must specify an endpoint"
+        | x ->
+            DefaultFiat |> asInvalid "Invalid Endpoint" x.[0]
