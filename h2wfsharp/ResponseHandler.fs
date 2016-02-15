@@ -37,10 +37,10 @@ module ResponseHandler =
     let nicePct (d:decimal) = niceNumber "{0:N2}%" d
 
     let dashboardHandler body =
-        let prettyPrint = DashboardProvider.Parse(body).JsonValue.ToString()
-        let lines = prettyPrint.Split('\n')
-        let trimmedLines = lines.Take(5).Concat(["..."])
-        trimmedLines.Aggregate(fun sum line-> (appendTo sum line))
+        DashboardProvider.Parse(body).JsonValue.ToString().Split('\n')
+        |> Seq.take 5
+        |> Seq.reduce appendTo
+        |> append "..."
 
     let todayPercent (dash:DashboardProvider.Dashboard) =
         let onTrackToday = dash.TodayStepGoals.Where(fun x -> x.OnTrack.IsSome).Single().Steps
