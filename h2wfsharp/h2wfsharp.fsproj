@@ -58,11 +58,11 @@
     <None Include="App.config" />
     <Content Include="packages.config" />
     <None Include="Dashboard.json" />
+    <Compile Include="Global.fs" />
     <Compile Include="Client.fs" />
     <Compile Include="ResponseHandler.fs" />
     <Compile Include="Fiat.fs" />
     <Compile Include="ArgParser.fs" />
-    <Compile Include="Out.fs" />
     <Compile Include="App.fs" />
     <Compile Include="Test.fs" />
     <Compile Include="Program.fs" />

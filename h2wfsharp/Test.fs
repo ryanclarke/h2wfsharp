@@ -3,8 +3,8 @@
 module Test =
     let RunCase args =
         printfn "ARGS:   %A" args
-        App.Run args
-        printfn ""
+        App.Test args |> printfn "%s\n" // (fun s -> s)
+        ()
 
     let RunBadCases () =
         RunCase ["garbage"]

@@ -1,13 +1,17 @@
 ﻿namespace H2W
 
 module App =
-    let Run args =
+    let private doIt args =
         let fiat = ArgParser.Parse args
-        match fiat.InvalidFiat with
+        match fiat.Invalid with
         | Some(err) ->
-            Out.ErrorText err
-            ResponseHandler.helpText()
+            ResponseHandler.ErrorHandler err
         | None ->
             Client.Req(fiat.Endpoint, fiat.Cred)
             |> Client.HitEndpoint
             |> ResponseHandler.HandleResponse fiat.Handler
+
+    let Run args =
+        doIt args |> printfn "%s"
+
+    let Test = doIt

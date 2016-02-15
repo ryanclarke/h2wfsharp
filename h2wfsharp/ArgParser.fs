@@ -3,7 +3,7 @@
 module ArgParser =
     open Fiat
 
-    let Parse args =
+    let rec Parse args =
         let rec parseFlags (fiat:Fiat) =
             function
             | [] -> fiat
@@ -17,6 +17,8 @@ module ArgParser =
                 parseFlags {fiat with File=file} x
             | ("-q" | "--quickstats") :: x ->
                 parseFlags {fiat with Quickstats=true} x
+            | ("-v" | "--verbose") :: x ->
+                parseFlags {fiat with Verbose=true} x
             | x ->
                 fiat |> asInvalid "Invalid Arg" x.[0]
 
