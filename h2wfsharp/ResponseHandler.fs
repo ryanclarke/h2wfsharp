@@ -10,8 +10,8 @@ module ResponseHandler =
     type TokenProvider = JsonProvider<""" {"token":"guid string"} """>
     type ErrorProvider = JsonProvider<""" {"error":"http error"} """>
 
-    let append newLine text = sprintf "%s\n%s" text newLine
-    let appendTo text newLine = append newLine text
+    let appendTo text newLine = sprintf "%s\n%s" text newLine
+    let append newLine text =  appendTo text newLine
 
     let helpText () = sprintf "You're gonna need help to do this right."
     let ErrorHandler (err:Error) =
@@ -37,9 +37,10 @@ module ResponseHandler =
     let nicePct (d:decimal) = niceNumber "{0:N2}%" d
 
     let dashboardHandler body =
-        DashboardProvider.Parse(body).Dashboard.CurrentSteps
-        |> niceInt
-        |> sprintf "STEPS:  %s"
+        let prettyPrint = DashboardProvider.Parse(body).JsonValue.ToString()
+        let lines = prettyPrint.Split('\n')
+        let trimmedLines = lines.Take(5).Concat(["..."])
+        trimmedLines.Aggregate(fun sum line-> (appendTo sum line))
 
     let todayPercent (dash:DashboardProvider.Dashboard) =
         let onTrackToday = dash.TodayStepGoals.Where(fun x -> x.OnTrack.IsSome).Single().Steps
