@@ -32,13 +32,13 @@ module ResponseHandler =
         |> storeToken tokenFile
         |> sprintf "TOKEN:  %A"
 
-    let niceNumber format (n:'a) = String.Format(format, n)
-    let niceInt (i:int) = niceNumber "{0:N0}" i
-    let nicePct (d:decimal) = niceNumber "{0:N2}%" d
+    let sformat format (x:'a) = String.Format(format, x)
+    let niceInt (i:int) = sformat "{0:N0}" i
+    let nicePct (d:decimal) = sformat "{0:N2}%" d
 
-    let dashboardHandler body =
+    let dashboardHandler lines body =
         DashboardProvider.Parse(body).JsonValue.ToString().Split('\n')
-        |> Seq.take 5
+        |> Seq.take lines
         |> Seq.reduce appendTo
         |> append "..."
 

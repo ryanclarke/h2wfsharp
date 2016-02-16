@@ -41,6 +41,6 @@ module Fiat =
     let withDashboardHandler fiat =
         match fiat.Quickstats with
         | true -> withHandler ResponseHandler.quickstatsHandler fiat
-        | false -> withHandler ResponseHandler.dashboardHandler fiat
+        | false -> withHandler (ResponseHandler.dashboardHandler 5) fiat
     let asInvalid error description fiat =
         {fiat with Invalid=Some({Error=error; Description=description})}
