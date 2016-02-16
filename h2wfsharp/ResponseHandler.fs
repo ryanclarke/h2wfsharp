@@ -60,15 +60,15 @@ module ResponseHandler =
     let parseBody onSuccess resp =
         match resp.Body with
         | Text(body) ->
-            let n = appendTo (sprintf "BODY:   %A" (bodyPreview body))
+            let bodyString = appendTo (sprintf "BODY:   %A" (bodyPreview body))
             match resp.StatusCode with
             | 200 ->
                 onSuccess body
-                |> n
+                |> bodyString
             | _ ->
                 ErrorProvider.Parse(body).Error
                 |> sprintf "ERROR:  %A"
-                |> n
+                |> bodyString
         | Binary(body) ->
             match resp.StatusCode with
             | 204 -> sprintf "BODY:   <NO CONTENT>"
