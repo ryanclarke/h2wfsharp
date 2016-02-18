@@ -3,8 +3,8 @@
 module Test =
     let RunCase args =
         App.Test args
-        |> Message.AppendTo (Message.Info "ARGS" (sprintf "%A" args))
-        |> Message.DumpAll
+        |> Message.AppendMsgTo (Message.InfoMsg "ARGS" (sprintf "%A" args))
+        |> Message.DumpMsgs
         printfn "%s" ""
 
     let RunBadCases () =

@@ -1,7 +1,7 @@
 ﻿namespace H2W
 
 module App =
-    let private doIt args =
+    let private parseAndRun args =
         let fiat = ArgParser.Parse args
         match fiat.Invalid with
         | Some(err) ->
@@ -12,6 +12,7 @@ module App =
             |> ResponseHandler.HandleResponse fiat.Handler
 
     let Run args =
-        doIt args |> Message.DumpAll
+        parseAndRun args
+        |> Message.DumpMsgs
 
-    let Test = doIt
+    let Test = parseAndRun

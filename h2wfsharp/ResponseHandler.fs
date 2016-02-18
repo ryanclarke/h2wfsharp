@@ -2,6 +2,7 @@
 
 module ResponseHandler =
     open FSharp.Data
+    open Message
     open System
     open System.IO
     open System.Linq
@@ -13,11 +14,11 @@ module ResponseHandler =
     let appendTo text newLine = sprintf "%s\n%s" text newLine
     let append newLine text =  appendTo text newLine
 
-    let helpText () = Message.Result "HELP" "You're gonna need help to do this right."
+    let helpText () = ResultMsg "HELP" "You're gonna need help to do this right."
     let ErrorHandler (err:Error) =
         let sprinterr (err:Error) = sprintf "%s: %s" err.Error err.Description
-        Message.Error (sprinterr err)
-        |> Message.Append (helpText())
+        ErrorMsg (sprinterr err)
+        |> AppendMsg (helpText())
 
     let storeToken tokenFile token =
         File.WriteAllLines(tokenFile, [token])
@@ -31,7 +32,7 @@ module ResponseHandler =
     let tokenHandler tokenFile body =
         TokenProvider.Parse(body).Token
         |> storeToken tokenFile
-        |> Message.Result "TOKEN"
+        |> ResultMsg "TOKEN"
 
     let sformat format (x:'a) = String.Format(format, x)
     let niceInt (i:int) = sformat "{0:N0}" i
@@ -43,7 +44,7 @@ module ResponseHandler =
         |> Seq.reduce appendTo
         |> appendTo ""
         |> append "..."
-        |> Message.Info "JSON"
+        |> InfoMsg "JSON"
 
     let todayPercent (dash:DashboardProvider.Dashboard) =
         let onTrackToday = dash.TodayStepGoals.Where(fun x -> x.OnTrack.IsSome).Single().Steps
@@ -58,27 +59,27 @@ module ResponseHandler =
         let weekPct = dash.WeekFullPct |> nicePct
 
         sprintf "today: %s (%s); week: %s (%s)" todaySteps todayPct weekSteps weekPct
-        |> Message.Result "STATS"
+        |> ResultMsg "STATS"
 
     let parseBody onSuccess resp =
         match resp.Body with
         | Text(body) ->
-            let bodyString = Message.AppendTo (Message.Info "BODY" (bodyPreview body))
+            let bodyString = AppendMsgTo (InfoMsg "BODY" (bodyPreview body))
             match resp.StatusCode with
             | 200 ->
                 onSuccess body
                 |> bodyString
             | _ ->
                 ErrorProvider.Parse(body).Error
-                |> Message.Error
+                |> ErrorMsg
                 |> bodyString
         | Binary(body) ->
             match resp.StatusCode with
-            | 204 -> Message.Info "BODY" "<NO CONTENT>"
-            | _ -> Message.Info "BODY" (sprintf "%A" body)
+            | 204 -> InfoMsg "BODY" "<NO CONTENT>"
+            | _ -> InfoMsg "BODY" (sprintf "%A" body)
 
     let HandleResponse onSuccess resp =
-        Message.Info "URL" resp.ResponseUrl
-        |> Message.Append (Message.Info "STATUS" (sprintf "%A" resp.StatusCode))
-        |> Message.Append (parseBody onSuccess resp)
+        InfoMsg "URL" resp.ResponseUrl
+        |> AppendMsg (InfoMsg "STATUS" (sprintf "%A" resp.StatusCode))
+        |> AppendMsg (parseBody onSuccess resp)
 

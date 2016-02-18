@@ -16,17 +16,17 @@ module Message =
         Payload: string
     }
 
-    let New level k v = [{Level=level; Payload=(sprintf "%-*s%s" 12 (sprintf "%s:" k) v)}]
-    let Error = New Error "ERROR"
-    let Info = New Info
-    let Result = New Result
+    let NewMsg level k v = [{Level=level; Payload=(sprintf "%-*s%s" 12 (sprintf "%s:" k) v)}]
+    let ErrorMsg = NewMsg Error "ERROR"
+    let InfoMsg = NewMsg Info
+    let ResultMsg = NewMsg Result
 
-    let Dump (msg:T) =
+    let DumpMsg (msg:T) =
         printfn "%s" msg.Payload
 
-    let DumpAll msgs =
+    let DumpMsgs msgs =
         msgs
-        |> List.iter Dump
+        |> List.iter DumpMsg
 
-    let AppendTo text newLine = List.append text newLine
-    let Append newLine text =  AppendTo text newLine
+    let AppendMsgTo text newLine = List.append text newLine
+    let AppendMsg newLine text =  AppendMsgTo text newLine

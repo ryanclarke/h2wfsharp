@@ -28,7 +28,7 @@ module Fiat =
         File=".h2wfsharptoken";
         Cred=(getTokenCredFromFile ".h2wfsharptoken");
         Quickstats=false;
-        Handler=(fun s -> (Message.Result "" ""));
+        Handler=(fun s -> (Message.ResultMsg "" ""));
         Verbose=false;
         Invalid=None
     }
