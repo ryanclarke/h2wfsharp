@@ -12,7 +12,7 @@ module Fiat =
         File: string
         Cred: Credentials
         Quickstats: bool
-        Handler: string -> string
+        Handler: string -> Message.Message list
         Verbose: bool
         Invalid: Error option
     }
@@ -28,7 +28,7 @@ module Fiat =
         File=".h2wfsharptoken";
         Cred=(getTokenCredFromFile ".h2wfsharptoken");
         Quickstats=false;
-        Handler=(fun s -> s);
+        Handler=(fun s -> (Message.Result "" ""));
         Verbose=false;
         Invalid=None
     }

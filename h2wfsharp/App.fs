@@ -12,6 +12,6 @@ module App =
             |> ResponseHandler.HandleResponse fiat.Handler
 
     let Run args =
-        doIt args |> printfn "%s"
+        doIt args |> Message.DumpAll
 
     let Test = doIt
