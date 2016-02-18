@@ -3,9 +3,9 @@
 module Test =
     let RunCase args =
         App.Test args
-        |> Message.AppendMsgTo (Message.InfoMsg "ARGS" (sprintf "%A" args))
+        |> Message.AppendMsgTo (Message.InfoMsg "ARGS" (Util.str args))
         |> Message.DumpMsgs
-        printfn "%s" ""
+        Util.print " "
 
     let RunBadCases () =
         RunCase ["garbage"]
@@ -17,7 +17,7 @@ module Test =
         RunCase ["auth"; "verify"]
 
     let RunDashboardCases () =
-        RunCase ["dashboard"]
+        RunCase ["dashboard"; "-m"; "5"]
         RunCase ["dashboard"; "--quickstats"]
 
     let RunAll email password =

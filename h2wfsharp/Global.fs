@@ -1,9 +1,16 @@
 ﻿namespace H2W
 
-type Error = {
-    Error: string
-    Description: string
-}
+module Util =
+    let str (x:'x) = sprintf "%A" x
+    let print x = printfn "%s" x
+
+module Error =
+    type T = {
+        Error: string
+        Description: string
+    }
+
+    let str (err:T) = sprintf "%s: %s" err.Error err.Description
 
 module Message =
     type MessageLevel =
@@ -22,7 +29,7 @@ module Message =
     let ResultMsg = NewMsg Result
 
     let DumpMsg (msg:T) =
-        printfn "%s" msg.Payload
+        Util.print msg.Payload
 
     let DumpMsgs msgs =
         msgs

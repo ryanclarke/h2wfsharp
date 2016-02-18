@@ -15,9 +15,8 @@ module ResponseHandler =
     let append newLine text =  appendTo text newLine
 
     let helpText () = ResultMsg "HELP" "You're gonna need help to do this right."
-    let ErrorHandler (err:Error) =
-        let sprinterr (err:Error) = sprintf "%s: %s" err.Error err.Description
-        ErrorMsg (sprinterr err)
+    let ErrorHandler (err:Error.T) =
+        ErrorMsg (Error.str err)
         |> AppendMsg (helpText())
 
     let storeToken tokenFile token =
@@ -38,12 +37,21 @@ module ResponseHandler =
     let niceInt (i:int) = sformat "{0:N0}" i
     let nicePct (d:decimal) = sformat "{0:N2}%" d
 
-    let dashboardHandler lines body =
-        DashboardProvider.Parse(body).JsonValue.ToString().Split('\n')
-        |> Seq.take lines
+    let dashboardHandler (lines:int option) body =
+        let pp = DashboardProvider.Parse(body).JsonValue.ToString().Split('\n')
+        let takeLines =
+            if lines.IsSome && lines.Value < pp.Length
+            then Seq.take lines.Value
+            else id
+        let appendEllipses =
+            if lines.IsSome && lines.Value < pp.Length
+            then append "..."
+            else id
+        pp
+        |> takeLines
         |> Seq.reduce appendTo
         |> appendTo ""
-        |> append "..."
+        |> appendEllipses
         |> InfoMsg "JSON"
 
     let todayPercent (dash:DashboardProvider.Dashboard) =
