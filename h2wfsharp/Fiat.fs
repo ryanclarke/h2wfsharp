@@ -12,7 +12,7 @@ module Fiat =
         File: string
         Cred: Credentials
         Quickstats: bool
-        Handler: string -> Message.Message list
+        Handler: string -> Message.T list
         Verbose: bool
         Invalid: Error option
     }

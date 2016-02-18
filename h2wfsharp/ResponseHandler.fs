@@ -11,14 +11,13 @@ module ResponseHandler =
     type ErrorProvider = JsonProvider<""" {"error":"http error"} """>
 
     let appendTo text newLine = sprintf "%s\n%s" text newLine
-    let appendS newLine text =  appendTo text newLine
-    let appendToL text newLine = List.append text newLine
-    let append newLine text =  appendToL text newLine
+    let append newLine text =  appendTo text newLine
 
     let helpText () = Message.Result "HELP" "You're gonna need help to do this right."
     let ErrorHandler (err:Error) =
-        Message.Error err.Error err.Description
-        |> append (helpText())
+        let sprinterr (err:Error) = sprintf "%s: %s" err.Error err.Description
+        Message.Error (sprinterr err)
+        |> Message.Append (helpText())
 
     let storeToken tokenFile token =
         File.WriteAllLines(tokenFile, [token])
@@ -42,8 +41,9 @@ module ResponseHandler =
         DashboardProvider.Parse(body).JsonValue.ToString().Split('\n')
         |> Seq.take lines
         |> Seq.reduce appendTo
-        |> appendS "..."
-        |> Message.Info "CONTENT"
+        |> appendTo ""
+        |> append "..."
+        |> Message.Info "JSON"
 
     let todayPercent (dash:DashboardProvider.Dashboard) =
         let onTrackToday = dash.TodayStepGoals.Where(fun x -> x.OnTrack.IsSome).Single().Steps
@@ -63,14 +63,14 @@ module ResponseHandler =
     let parseBody onSuccess resp =
         match resp.Body with
         | Text(body) ->
-            let bodyString = appendToL (Message.Info "BODY" (bodyPreview body))
+            let bodyString = Message.AppendTo (Message.Info "BODY" (bodyPreview body))
             match resp.StatusCode with
             | 200 ->
                 onSuccess body
                 |> bodyString
             | _ ->
                 ErrorProvider.Parse(body).Error
-                |> Message.Error "ERROR"
+                |> Message.Error
                 |> bodyString
         | Binary(body) ->
             match resp.StatusCode with
@@ -79,6 +79,6 @@ module ResponseHandler =
 
     let HandleResponse onSuccess resp =
         Message.Info "URL" resp.ResponseUrl
-        |> append (Message.Info "STATUS" (sprintf "%A" resp.StatusCode))
-        |> append (parseBody onSuccess resp)
+        |> Message.Append (Message.Info "STATUS" (sprintf "%A" resp.StatusCode))
+        |> Message.Append (parseBody onSuccess resp)
 

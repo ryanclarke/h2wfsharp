@@ -11,20 +11,22 @@ module Message =
         | Info
         | Result
 
-    type Message = {
+    type T = {
         Level: MessageLevel
         Payload: string
     }
 
-    let b level payload = [{Level=level; Payload=payload}]
-    let New level k v = b level (sprintf "%s:   %s" k v) 
-    let Error = New Error
+    let New level k v = [{Level=level; Payload=(sprintf "%-*s%s" 12 (sprintf "%s:" k) v)}]
+    let Error = New Error "ERROR"
     let Info = New Info
     let Result = New Result
 
-    let Dump (msg:Message) =
+    let Dump (msg:T) =
         printfn "%s" msg.Payload
 
     let DumpAll msgs =
         msgs
         |> List.iter Dump
+
+    let AppendTo text newLine = List.append text newLine
+    let Append newLine text =  AppendTo text newLine

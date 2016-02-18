@@ -2,9 +2,10 @@
 
 module Test =
     let RunCase args =
-        printfn "ARGS:   %A" args
-        App.Test args |> Message.DumpAll // (fun s -> s)
-        ()
+        App.Test args
+        |> Message.AppendTo (Message.Info "ARGS" (sprintf "%A" args))
+        |> Message.DumpAll
+        printfn "%s" ""
 
     let RunBadCases () =
         RunCase ["garbage"]
