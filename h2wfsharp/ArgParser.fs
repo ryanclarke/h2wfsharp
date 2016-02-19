@@ -7,7 +7,7 @@ module ArgParser =
     let Parse args =
         let rec parseFlags (fiat:Fiat) =
             let badArg arg = asInvalid "Invalid Arg" arg fiat
-            let badArgType arg t = badArg (sprintf "%s must be a %s" arg t)
+            let badArgType arg t = badArg (sprintf "'%s' must be a %s" arg t)
             function
             | [] -> fiat
             | ("-e" | "--email") :: email :: x -> 
