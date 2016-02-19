@@ -1,20 +1,20 @@
 ﻿namespace H2W
 
 module Message =
-    type MessageLevel =
+    type Level =
         | Error
-        | Info
         | Result
+        | Info
 
     type T = {
-        Level: MessageLevel
+        Level: Level
         Payload: string
     }
 
     let NewMsg level k v = [{Level=level; Payload=(sprintf "%-*s%s" 12 (sprintf "%s:" k) v)}]
-    let ErrorMsg = NewMsg Error "ERROR"
-    let InfoMsg = NewMsg Info
-    let ResultMsg = NewMsg Result
+    let ErrorMsg = NewMsg Level.Error "ERROR"
+    let InfoMsg = NewMsg Level.Info
+    let ResultMsg = NewMsg Level.Result
 
     let DumpMsg (msg:T) =
         Util.print msg.Payload

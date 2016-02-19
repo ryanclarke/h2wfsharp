@@ -2,7 +2,7 @@
 
 module Test =
     let RunCase args =
-        App.Test args
+        App.Test (List.append args ["-v"])
         |> Message.AppendMsgTo (Message.InfoMsg "ARGS" (Util.str args))
         |> Message.DumpMsgs
         Util.print " "
