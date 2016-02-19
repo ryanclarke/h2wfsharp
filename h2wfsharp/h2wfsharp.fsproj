@@ -58,7 +58,9 @@
     <None Include="App.config" />
     <Content Include="packages.config" />
     <None Include="Dashboard.json" />
-    <Compile Include="Global.fs" />
+    <Compile Include="Util.fs" />
+    <Compile Include="Error.fs" />
+    <Compile Include="Message.fs" />
     <Compile Include="Client.fs" />
     <Compile Include="ResponseHandler.fs" />
     <Compile Include="Fiat.fs" />
