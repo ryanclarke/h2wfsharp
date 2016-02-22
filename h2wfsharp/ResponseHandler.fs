@@ -90,4 +90,3 @@ module ResponseHandler =
         InfoMsg "URL" resp.ResponseUrl
         |> AppendMsg (InfoMsg "STATUS" (sprintf "%A" resp.StatusCode))
         |> AppendMsg (parseBody onSuccess resp)
-

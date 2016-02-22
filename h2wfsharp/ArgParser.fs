@@ -37,6 +37,10 @@ module ArgParser =
             parseFlags DefaultFiat x
             |> withUrl "auth/token/verify"
             |> withTokenFile
+        | "auth" :: "delete" :: x ->
+            parseFlags DefaultFiat x
+            |> withNoNetwork
+            |> withTokenHandler
         | "auth" :: x ->
             parseFlags DefaultFiat x
             |> withUrl "auth/token"

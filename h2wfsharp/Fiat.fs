@@ -15,6 +15,7 @@ module Fiat =
         MaxLines: int option
         Handler: string -> Message.T list
         Verbose: bool
+        NetworkAccess: bool
         Invalid: Error.T option
     }
 
@@ -32,6 +33,7 @@ module Fiat =
         MaxLines=None;
         Handler=(fun s -> (Message.ResultMsg "" ""));
         Verbose=false;
+        NetworkAccess=true;
         Invalid=None
     }
 
@@ -39,6 +41,7 @@ module Fiat =
     let withTokenFile fiat = {fiat with Cred=(getTokenCredFromFile fiat.File)}
     let withUrl url fiat = {fiat with Endpoint=(h2wUrl url)}
     let withHandler handler fiat = {fiat with Handler=handler}
+    let withNoNetwork fiat = {fiat with NetworkAccess=false}
     let withTokenHandler fiat = {fiat with Handler=(ResponseHandler.tokenHandler fiat.File)}
     let withDashboardHandler fiat =
         match fiat.Quickstats with

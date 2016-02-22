@@ -39,4 +39,4 @@ module Client =
     let HitEndpoint (req:Req) =
         Http.Request(req.Url,
             headers = [ "X-H2W-Client-ID", "0"; "Authorization", req.BasicAuthorization ],
-            silentHttpErrors = true )
+            silentHttpErrors = true)
