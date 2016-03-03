@@ -34,7 +34,7 @@ module Client =
         member this.Cred = credentials
         member this.BasicAuthorization = basic
 
-    let h2wUrl endpoint = sprintf "https://h2w.cc/api/v1/%s" endpoint
+    let h2wUrl endpoint = sprintf "https://www.h2w.cc/api/v1/%s" endpoint
 
     let HitEndpoint (req:Req) =
         Http.Request(req.Url,
